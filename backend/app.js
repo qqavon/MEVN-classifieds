@@ -3,12 +3,26 @@ const express = require('express')
     , cors = require('cors')
     , mongoose = require('mongoose')
     , error = require('./api/middlewares/error')
+    , { DB_NAME, USER_NAME, PASSWORD, CLUSTER } = require('./constants.json')
 
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
+mongoose.connect(`mongodb+srv://${USER_NAME}:${PASSWORD}@${CLUSTER}.mongodb.net/${DB_NAME}`, {
+    useNewUrlParser: true
+})
+mongoose.connection.on('connected', () => {
+    console.log('Connected with MongoDB')
+})
+mongoose.connection.on('error', (err) => {
+    console.log(`Error with MongoDB\n ${err}`)
+})
+mongoose.connection.on('disconnected', () => {
+    console.log(`MongoDB disconnected`)
+})
 
 app.use('/api', require('./api/routes/index'))
 
