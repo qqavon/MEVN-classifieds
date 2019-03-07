@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const { check } = require('express-validator/check')
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET } = require('../../constants.json')
 
 module.exports = {
     //logowanie uzytkownika
@@ -11,11 +13,23 @@ module.exports = {
             password: req.body.password
         }
 
-        const { password } = await User.findOne({ username: user.username }).select('password')
+        const userData = await User.findOne({ username: user.username }).select('username password')
 
-        if(await areSamePasswords(user.password, password)) {
+        if(await areSamePasswords(user.password, userData.password)) {
+            const token = await jwt.sign(
+                {
+                    _id: userData._id,
+                    username: userData.username
+                },
+                JWT_SECRET,
+                {
+                    expiresIn: 60 //1 min (testowy czas)
+                }
+            )
+
             return res.status(200).json({
-                message: 'Zalogowano.'
+                message: 'Zalogowano.',
+                token
             })
         }
         else {
@@ -86,7 +100,7 @@ module.exports.validateRegister = [
         .withMessage("Nazwa użytkownika powinna zawierać od 5 do 16 znaków.")
     
         .isAlphanumeric()
-        .withMessage("Nazwa użytkownika może zawierać tylko litery i liczby.")
+        .withMessage("Nazwa użytkownika może zawierać tylko litery i/lub liczby.")
 
         .custom(async value => await User.findOne({ username: value }) == null)
         .withMessage("Nazwa użytkownika jest zajęta."),
