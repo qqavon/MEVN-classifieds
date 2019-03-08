@@ -2,5 +2,6 @@
     "DB_NAME": "",
     "USER_NAME": "",
     "PASSWORD": "",
-    "CLUSTER": ""
+    "CLUSTER": "",
+    "JWT_SECRET": ""
 }

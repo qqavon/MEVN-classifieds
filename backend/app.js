@@ -15,7 +15,7 @@ mongoose.connect(`mongodb+srv://${USER_NAME}:${PASSWORD}@${CLUSTER}.mongodb.net/
     useNewUrlParser: true
 })
 mongoose.connection.on('connected', () => {
-    console.log('Connected with MongoDB')
+    console.log('MongoDB connected')
 })
 mongoose.connection.on('error', (err) => {
     console.log(`Error with MongoDB\n ${err}`)
