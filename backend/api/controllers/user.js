@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const UserData = require('../models/userData')
 const { check } = require('express-validator/check')
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = require('../../constants.json')
@@ -14,7 +15,11 @@ module.exports = {
         }
 
         const userData = await User.findOne({ username: user.username }).select('username password')
-
+        if(!userData)
+            return res.status(400).json({
+                message: 'Nazwa użytkownika lub hasło jest niepoprawne.'
+            })
+        
         if(await areSamePasswords(user.password, userData.password)) {
             const token = await jwt.sign(
                 {
@@ -49,10 +54,15 @@ module.exports = {
         //hashowanie hasla
         newUser.password = await hashPassword(newUser.password)
 
-        await new User({
+        const user = await new User({
             _id: mongoose.Types.ObjectId(),
             username: newUser.username,
             password: newUser.password   
+        }).save()
+
+        await new UserData({
+            _id: mongoose.Types.ObjectId(),
+            user: user._id
         }).save()
 
         return res.status(200).json({
