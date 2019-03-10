@@ -20,14 +20,11 @@ Router.delete('/:id',
     classifiedsController.delete)
 
 Router.get('/',
+    classifiedsController.validateClassifiedSearch,
+    error.checkValidation,
     classifiedsController.findAll)
-
+    
 Router.get('/:id',
     classifiedsController.findDetailed)
-
-Router.get('/:category/:name',
-    classifiedsController.validateClassifiedChosen,
-    error.checkValidation,
-    classifiedsController.findChosen)
 
 module.exports = Router

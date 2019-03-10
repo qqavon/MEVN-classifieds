@@ -50,7 +50,18 @@ module.exports = {
     },
 
     async findAll(req, res, next) {
-        const classifieds = await Classifieds.find()
+        console.log('query', req.query)
+        let sortObj = {}
+        sortObj[req.sortBy.query] = req.sortBy.sort
+        //Na janusza bo nie umiem inaczej
+        const classifieds = await Classifieds
+            .find({ name: {$regex: new RegExp(`.*${req.query.q}.*`)} })
+            .select('user name category')
+            .sort(sortObj)
+            .populate({
+                path: 'user',
+                select: 'username'
+            })
 
         return res.status(200).json({
             message: 'Wszystkie ogłoszenia.',
@@ -58,18 +69,17 @@ module.exports = {
         })
     },
 
-    async findChosen(req, res, next) {
-        const regExpName = new RegExp(`.*${req.params.name}.*`)
-        const classifieds = await Classifieds.find({category: req.params.category, name: regExpName})
-        return res.status(200).json({
-            message: 'Wybrane ogłoszenia.',
-            classifieds
-        })
-    },
-
     async findDetailed(req, res, next) {
+        const classified = await Classifieds
+            .findOne({ _id: req.params.id })
+            .populate({
+                path: 'user',
+                select: 'username'
+            })
+
         return res.status(200).json({
-            message: 'Wybrane szczegółowe ogłoszenie.'
+            message: 'Wybrane szczegółowe ogłoszenie.',
+            classified
         })
     }
 }
@@ -90,8 +100,8 @@ module.exports.validateClassified = [
         .withMessage('Opis jest wymagany.')
 
         .trim()
-        .isLength({ max: 500 })
-        .withMessage('Opis jest za długi. (max. 500 znaków)'),
+        .isLength({ max: 2000 })
+        .withMessage('Opis jest za długi. (max. 2000 znaków)'),
 
     check('voivodeship')
         .custom(value => (typeof value !== "number" || value > 16 || value < 0) ? false : true)
@@ -102,17 +112,47 @@ module.exports.validateClassified = [
         .withMessage('Niepoprawne dane z kategorią.')
 ]
 
-module.exports.validateClassifiedChosen = [
+module.exports.validateClassifiedSearch = [
     check('category')
+        .optional()
         .custom(value => (value > 11 || value < 0) ? false : true)
         .withMessage('Niepoprawne dane z kategorią.'),
-
-    check('name')
-        .trim()
-        .not().isEmpty()
-        .withMessage('Nazwa jest wymagana.')
-
-        .trim()
-        .isLength({ max: 500 })
+    
+    check('q')
+        .optional()
+        .isLength({ max: 80 })
         .withMessage('Nazwa jest za długa. (max. 80 znaków)'),
+
+    check('sort_by')
+        .optional()
+        .custom((value, {req}) => {
+            if(value.includes('_')) {
+                let query = value.split('_')
+                let sort = query.pop()
+                query = query.join(" ")
+
+                switch(sort) {
+                    case 'asc':
+                        sort = 1
+                        break
+                    case 'desc':
+                        sort = -1
+                        break
+                    default:
+                        sort = 1
+                }
+
+                req.sortBy = {
+                    query,
+                    sort
+                }
+            }
+            else {
+                req.sortBy = {
+                    query: "name",
+                    sort: 1
+                }
+            }
+            return true
+        })
 ]
