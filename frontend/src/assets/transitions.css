@@ -1,0 +1,27 @@
+/* animacje do vue */
+
+/* rotation */
+.rotation-enter-active, .rotation-leave-active {
+    transition: all 0.3s;
+    transition-timing-function: ease-in-out
+}
+
+
+.rotation-enter, .rotation-leave-to {
+    transform: rotateY(90deg);
+    opacity: 0;
+}
+
+/* fade */
+.fade-enter-active, .fade-leave-active {
+    transition: all 0.3s;
+    transition-timing-function: ease-in-out
+}
+.fade-enter {
+    transform: translateY(-50px);
+    opacity: 0;
+}
+.fade-leave-to {
+    transform: translateY(50px);
+    opacity: 0;
+}
