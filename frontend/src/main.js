@@ -5,7 +5,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.3/7777/api'
+  baseURL: 'http://192.168.1.3:7777/api'
 })
 
 Vue.use(VueAxios, axiosInstance)

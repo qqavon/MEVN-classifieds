@@ -50,13 +50,21 @@ module.exports = {
     },
 
     async findAll(req, res, next) {
-        console.log('query', req.query)
+        let findQuery = {}
         let sortObj = {}
-        sortObj[req.sortBy.query] = req.sortBy.sort
-        //Na janusza bo nie umiem inaczej
+        //Na janusza bo nie mam pomysłu SORTOWANE
+        if   (!req.query.sort_by) sortObj['name'] = 1
+        else sortObj[req.sortBy.query] = req.sortBy.sort
+        //Dane do pobrania (nazwa, województwo, kategoria)
+        if(req.query.q) findQuery['name'] = new RegExp(`.*${req.query.q}.*`)
+        if(req.query.voivodeship > 0) findQuery['voivodeship'] = +req.query.voivodeship
+        if(+req.query.category > 0) findQuery['category'] = +req.query.category
+
+        console.log(findQuery)
         const classifieds = await Classifieds
-            .find({ name: {$regex: new RegExp(`.*${req.query.q}.*`)} })
-            .select('user name category')
+            // .find({ name: {$regex: new RegExp(`.*${req.query.q}.*`), voivodeship} })
+            .find(findQuery)
+            .select('user name category createdAt voivodeship')
             .sort(sortObj)
             .populate({
                 path: 'user',
@@ -108,15 +116,20 @@ module.exports.validateClassified = [
         .withMessage('Niepoprawne dane z województwem.'),
 
     check('category')
-        .custom(value => (typeof value !== "number" || value > 11 || value < 0) ? false : true)
+        .custom(value => (typeof value !== "number" || value > 12 || value < 0) ? false : true)
         .withMessage('Niepoprawne dane z kategorią.')
 ]
 
 module.exports.validateClassifiedSearch = [
     check('category')
         .optional()
-        .custom(value => (value > 11 || value < 0) ? false : true)
+        .custom(value => (value > 12 || value < 0) ? false : true)
         .withMessage('Niepoprawne dane z kategorią.'),
+    
+    check('voivodeship')
+        .optional()
+        .custom(value => (value > 16 || value < 0) ? false : true)
+        .withMessage('Niepoprawne dane z województwem.'),
     
     check('q')
         .optional()
