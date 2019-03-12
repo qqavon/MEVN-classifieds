@@ -46,6 +46,7 @@
         </div>
         <h2>Lista ogłoszeń</h2>
         <div class="classifieds-list">
+            <div class="loading" v-if="searching"></div>
             <transition-group name="rotation" tag="div" class="idk">
                 <classifieds-item
                 v-for="classified of classifieds"
@@ -79,13 +80,14 @@ export default {
     },
     methods: {
         search() {
+            this.searching = true
             this.searchString = ''
 
             if(this.searchObj.name.length > 1)
                 this.searchString += `q=${this.searchObj.name}`
 
             if(+this.searchObj.voivodeship.length)
-                this.searchString += `&category=${this.searchObj.voivodeship}`
+                this.searchString += `&voivodeship=${this.searchObj.voivodeship}`
 
             if(+this.searchObj.category)
                 this.searchString += `&category=${this.searchObj.category}`
@@ -95,6 +97,7 @@ export default {
                 this.classifieds = result.data.classifieds
             })
             .catch(err => console.log(err))
+            .finally(() => this.searching = false )
         }
     }
 }
@@ -147,5 +150,22 @@ h2 {
 .classifieds-list {
     padding: 5px;
     margin: 5px;
+    display: grid;
+}
+
+.loading {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    border: solid black 2px;
+    border-right: none;
+    border-bottom: none;
+    justify-self: center;
+    animation: rotating 1s infinite;
+    margin-bottom: 25px;
+}
+@keyframes rotating {
+    0% { transform: rotate(0deg) }
+    100% { transform: rotate(360deg) }
 }
 </style>
