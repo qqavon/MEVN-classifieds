@@ -50,8 +50,17 @@ module.exports = {
     },
 
     async findAll(req, res, next) {
+        let classifiedsCount = await Classifieds.countDocuments({})
         let findQuery = {}
         let sortObj = {}
+        let docsPerPage = 10
+
+        let page = req.query.page
+        if(page <= 0) page = 1
+
+        let skipDocs = page * docsPerPage - docsPerPage
+        let numOfPages = Math.ceil(classifiedsCount / docsPerPage)
+
         //Na janusza bo nie mam pomysłu SORTOWANE
         if   (!req.query.sort_by) sortObj['name'] = 1
         else sortObj[req.sortBy.query] = req.sortBy.sort
@@ -60,19 +69,22 @@ module.exports = {
         if(req.query.voivodeship > 0) findQuery['voivodeship'] = +req.query.voivodeship
         if(+req.query.category > 0) findQuery['category'] = +req.query.category
 
-        console.log(findQuery)
         const classifieds = await Classifieds
-            // .find({ name: {$regex: new RegExp(`.*${req.query.q}.*`), voivodeship} })
             .find(findQuery)
+            .skip(skipDocs)
+            .limit(docsPerPage)
             .select('user name category createdAt voivodeship')
             .sort(sortObj)
             .populate({
                 path: 'user',
                 select: 'username'
             })
+        
+        
 
         return res.status(200).json({
             message: 'Wszystkie ogłoszenia.',
+            numOfPages,
             classifieds
         })
     },
@@ -135,6 +147,11 @@ module.exports.validateClassifiedSearch = [
         .optional()
         .isLength({ max: 80 })
         .withMessage('Nazwa jest za długa. (max. 80 znaków)'),
+
+    check('page')
+        .optional()
+        .isNumeric()
+        .withMessage('Podana strona nie jest numeryczna'),
 
     check('sort_by')
         .optional()
