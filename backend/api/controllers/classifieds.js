@@ -50,9 +50,17 @@ module.exports = {
     },
 
     async findAll(req, res, next) {
-        let classifiedsCount = await Classifieds.countDocuments({})
         let findQuery = {}
         let sortObj = {}
+        
+        if   (!req.query.sort_by) sortObj['name'] = 1
+        else sortObj[req.sortBy.query] = req.sortBy.sort
+        //Dane do pobrania (nazwa, województwo, kategoria)
+        if(req.query.q) findQuery['name'] = new RegExp(`.*${req.query.q}.*`)
+        if(req.query.voivodeship > 0) findQuery['voivodeship'] = +req.query.voivodeship
+        if(+req.query.category > 0) findQuery['category'] = +req.query.category
+
+        let classifiedsCount = await Classifieds.countDocuments(findQuery)
         let docsPerPage = 10
 
         let page = req.query.page
@@ -62,12 +70,6 @@ module.exports = {
         let numOfPages = Math.ceil(classifiedsCount / docsPerPage)
 
         //Na janusza bo nie mam pomysłu SORTOWANE
-        if   (!req.query.sort_by) sortObj['name'] = 1
-        else sortObj[req.sortBy.query] = req.sortBy.sort
-        //Dane do pobrania (nazwa, województwo, kategoria)
-        if(req.query.q) findQuery['name'] = new RegExp(`.*${req.query.q}.*`)
-        if(req.query.voivodeship > 0) findQuery['voivodeship'] = +req.query.voivodeship
-        if(+req.query.category > 0) findQuery['category'] = +req.query.category
 
         const classifieds = await Classifieds
             .find(findQuery)

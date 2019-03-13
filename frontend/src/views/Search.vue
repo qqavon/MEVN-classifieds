@@ -44,16 +44,29 @@
             </div>
             <button @click="search"><i class="fas fa-search"></i></button>
         </div>
+        <div v-if="pages > 1" class="pages">
+            <span>Strona:</span>
+            <ul class="pagination">
+                <li v-if="currentPage-2 >= 1 && currentPage > 2" @click="gotoPage(1)"> 1 ... </li>
+                <li v-if="currentPage-1 >= 1" @click="gotoPage(currentPage-1)" > {{ currentPage - 1 }} </li>
+                <li class="currentPage"> {{ currentPage }} </li>
+                <li v-if="currentPage+1 <= pages" @click="gotoPage(currentPage+1)"> {{ currentPage + 1 }} </li>
+                <li v-if="currentPage+2 <= pages-1 && currentPage==1" @click="gotoPage(currentPage+1)"> {{ currentPage + 2 }} </li>
+                <li v-if="currentPage < pages && currentPage+1 != pages" @click="gotoPage(pages)" > ...{{ pages }} </li>
+            </ul>
+        </div>
         <h2>Lista ogłoszeń</h2>
         <div class="classifieds-list">
             <div class="loading" v-if="searching"></div>
-            <transition-group name="rotation" tag="div" class="idk">
-                <classifieds-item
-                v-for="classified of classifieds"
-                :classified="classified"
-                :key="classified._id"
-                ></classifieds-item>
-            </transition-group>
+            <div v-if="!searching">
+                <transition-group name="rotation" tag="div" class="idk">
+                    <classifieds-item
+                    v-for="classified of classifieds"
+                    :classified="classified"
+                    :key="classified._id"
+                    ></classifieds-item>
+                </transition-group>
+            </div>
         </div>
     </div>
 </template>
@@ -75,26 +88,41 @@ export default {
             },
             searchString: '',
             searching: false,
-            classifieds: []
+            classifieds: [],
+            pages: 0,
+            currentPage: 1
         }
     },
     methods: {
-        search() {
+        gotoPage(page) {
+
+            if(this.currentPage != page) {
+                this.currentPage = page
+                this.search(false)
+            }
+        },
+        search(clear = true) {
             this.searching = true
-            this.searchString = ''
 
-            if(this.searchObj.name.length > 1)
-                this.searchString += `q=${this.searchObj.name}`
+            if(clear) {
+                this.searchString = ''
+                this.currentPage = 1
+                this.pages = 1
 
-            if(+this.searchObj.voivodeship.length)
-                this.searchString += `&voivodeship=${this.searchObj.voivodeship}`
+                if(this.searchObj.name.length > 1)
+                    this.searchString += `q=${this.searchObj.name}`
 
-            if(+this.searchObj.category)
-                this.searchString += `&category=${this.searchObj.category}`
+                if(+this.searchObj.voivodeship.length)
+                    this.searchString += `&voivodeship=${this.searchObj.voivodeship}`
 
-            Vue.axios.get(`/classifieds/?${this.searchString}`)
+                if(+this.searchObj.category)
+                    this.searchString += `&category=${this.searchObj.category}`
+            }
+
+            Vue.axios.get(`/classifieds/?${this.searchString}&page=${this.currentPage}`)
             .then(result => {
                 this.classifieds = result.data.classifieds
+                this.pages = result.data.numOfPages
             })
             .catch(err => console.log(err))
             .finally(() => this.searching = false )
@@ -163,6 +191,34 @@ h2 {
     justify-self: center;
     animation: rotating 1s infinite;
     margin-bottom: 25px;
+}
+
+.pages {
+    padding: 0 .75em;
+}
+
+.pagination {
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, auto));
+    list-style-type: none;
+    align-items: center;
+    justify-items: center;
+}
+.pagination li {
+    display: grid;
+
+    justify-content: center;
+    align-content: center;
+
+    padding: .25em .45em;
+    cursor: pointer;
+    border: solid black 1px;
+}
+.currentPage {
+    background-color: black;
+    color: white
 }
 @keyframes rotating {
     0% { transform: rotate(0deg) }
