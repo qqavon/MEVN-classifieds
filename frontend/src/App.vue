@@ -29,12 +29,15 @@
         </div>
       </router-link>
 
-      <router-link to="/">
-        <div class="nav-link">
-          <i class="fas fa-user"></i>
-          <span class="nav-link-text">Konto</span>
+      <div class="nav-link" @click="toggleAccountDropdown()">
+        <i class="fas fa-user"></i>
+        <span class="nav-link-text">Konto</span>
+
+        <div class="nav-account-dropdown">
+          <router-link to="/login"> Login </router-link>
+          <router-link to="/register"> Register </router-link>
         </div>
-      </router-link>
+      </div>
     </nav>
 
     <transition name="fade" mode="out-in">
@@ -66,7 +69,7 @@ body {
 }
 
 #app {
-
+  overflow: hidden;
 }
 
 nav {
@@ -76,13 +79,17 @@ nav {
   align-items: center;
   justify-items: center;
   justify-content: right;
+  /* overflow: hidden; */
 
   top: 0;
   left: 0;
   padding: 7px 0;
 
   border-bottom: solid #ccc 2px;
+  background-color: #fff;
   z-index: 10;
+}
+.nav-link {
 }
 .nav-link > .nav-link-text {
   display: none;
@@ -90,8 +97,46 @@ nav {
 .nav-link > i {
   font-size: 1.5em;
 }
+.nav-account-dropdown {
+  position: absolute;
+  display: grid;
+  grid-gap: 1.5em;
+  padding: .5em .75em;
+  width: 120px;
+  background-color: #222;
+  text-align: left;
+
+  right: 0;
+  bottom: 0;
+  transition: all .5s;
+  transform: translateY(100%) translateX(100%);
+  z-index: 9;
+}
+.nav-account-dropdown[class~="active"] {
+  transform: translateY(100%) translateX(0);
+}
+.nav-account-dropdown > a {
+  color: white;
+}
 
 #nav a.router-link-exact-active {
   
 }
 </style>
+
+<script>
+export default {
+  data() {
+    return {
+      activeAccountDropdown: false
+    }
+  },
+  methods: {
+    toggleAccountDropdown(value) {
+      document
+        .querySelector('.nav-account-dropdown')
+        .classList.toggle('active')
+    }
+  }
+}
+</script>
