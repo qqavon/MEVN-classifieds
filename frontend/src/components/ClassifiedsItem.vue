@@ -97,7 +97,7 @@ export default {
 .classifieds-item-voivodeship {
     position: absolute;
     
-    transform: translateY(-18px) translateX(-5px);
+    transform: translateY(-18px) translateX(6px);
     right: 0;
     background-color: #fff;
     border: solid black 1px;

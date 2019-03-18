@@ -22,7 +22,7 @@
         </div>
       </router-link>
 
-      <router-link to="/">
+      <router-link v-if="logged" to="/">
         <div class="nav-link">
           <i class="fas fa-plus"></i>
           <span class="nav-link-text">Dodaj ogłoszenie</span>
@@ -33,16 +33,21 @@
         <i class="fas fa-user"></i>
         <span class="nav-link-text">Konto</span>
 
-        <div class="nav-account-dropdown">
+        <div v-if="!logged" class="nav-account-dropdown">
           <router-link to="/login"> Login </router-link>
           <router-link to="/register"> Register </router-link>
+        </div>
+
+        <div v-else class="nav-account-dropdown">
+          <router-link to="/account"> Konto </router-link>
+          <span @click="logout"> Wyloguj </span>
         </div>
       </div>
     </nav>
 
     <transition name="fade" mode="out-in">
       <keep-alive>
-        <router-view/>
+        <router-view @auth="auth" />
       </keep-alive>
     </transition>
   </div>
@@ -75,7 +80,7 @@ body {
 nav {
   position: sticky;
   display: grid;
-  grid-template-columns: repeat(5, 50px);
+  grid-template-columns: repeat(auto-fit, 50px);
   align-items: center;
   justify-items: center;
   justify-content: right;
@@ -115,7 +120,7 @@ nav {
 .nav-account-dropdown[class~="active"] {
   transform: translateY(100%) translateX(0);
 }
-.nav-account-dropdown > a {
+.nav-account-dropdown > * {
   color: white;
 }
 
@@ -125,10 +130,13 @@ nav {
 </style>
 
 <script>
+import auth from './auth.js'
+
 export default {
   data() {
     return {
-      activeAccountDropdown: false
+      activeAccountDropdown: false,
+      logged: false
     }
   },
   methods: {
@@ -136,7 +144,18 @@ export default {
       document
         .querySelector('.nav-account-dropdown')
         .classList.toggle('active')
+    },
+    auth(status) {
+      this.logged = status
+    },
+    logout() {
+      this.logged = false
+      auth.removeUserToken()
+      this.$router.replace('login')
     }
+  },
+  created() {
+    this.logged = auth.isToken()
   }
 }
 </script>

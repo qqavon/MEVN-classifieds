@@ -17,7 +17,7 @@ module.exports = {
         const userData = await User.findOne({ username: user.username }).select('username password')
         if(!userData)
             return res.status(400).json({
-                message: 'Nazwa użytkownika lub hasło jest niepoprawne.'
+                errors: ['Nazwa użytkownika lub hasło jest niepoprawne.']
             })
         
         if(await areSamePasswords(user.password, userData.password)) {

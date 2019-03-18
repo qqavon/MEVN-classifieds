@@ -51,7 +51,7 @@
                 <li v-if="currentPage-1 >= 1" @click="gotoPage(currentPage-1)" > {{ currentPage - 1 }} </li>
                 <li class="currentPage"> {{ currentPage }} </li>
                 <li v-if="currentPage+1 <= pages" @click="gotoPage(currentPage+1)"> {{ currentPage + 1 }} </li>
-                <li v-if="currentPage+2 <= pages-1 && currentPage==1" @click="gotoPage(currentPage+1)"> {{ currentPage + 2 }} </li>
+                <li v-if="currentPage+2 <= pages-1 && currentPage==1" @click="gotoPage(currentPage + 2)"> {{ currentPage + 2 }} </li>
                 <li v-if="currentPage < pages && currentPage+1 != pages" @click="gotoPage(pages)" > ...{{ pages }} </li>
             </ul>
         </div>
