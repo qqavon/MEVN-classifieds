@@ -126,11 +126,11 @@ module.exports.validateClassified = [
         .withMessage('Opis jest za długi. (max. 2000 znaków)'),
 
     check('voivodeship')
-        .custom(value => (typeof value !== "number" || value > 16 || value < 0) ? false : true)
+        .custom(value => (value > 16 || value < 0) ? false : true)
         .withMessage('Niepoprawne dane z województwem.'),
 
     check('category')
-        .custom(value => (typeof value !== "number" || value > 12 || value < 0) ? false : true)
+        .custom(value => (value > 12 || value < 0) ? false : true)
         .withMessage('Niepoprawne dane z kategorią.')
 ]
 

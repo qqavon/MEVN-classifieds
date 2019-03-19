@@ -3,10 +3,47 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
+import { Service } from 'axios-middleware'
+import auth from './auth'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.3:7777/api'
+  baseURL: 'http://192.168.1.7:7777/api',
+  headers: {
+    'Authorization': localStorage.getItem('token')
+  }
 })
+
+const service = new Service(axiosInstance)
+
+service.register({
+  onResponseError(error) {
+
+    if(JSON.parse(error.response.data).isLogged == false) {
+      auth.removeUserToken()
+      router.push({ name: 'login' })
+    }
+
+    return new Promise((resolve, reject) => {
+      reject(error)
+    })
+  }
+})
+
+// const service = new Service(axiosInstance)
+
+// service.register({
+//   onResponseError(error) {
+//     error.response.data = JSON.parse(error.response.data)
+//     console.log(error.response.data)
+//     if(error.response.data.isLogged == false) {
+//       store.methods.clearUserData()
+//       router.push({ name: 'login' })
+//     }
+//     return new Promise((resolve, reject) => {
+//       reject(error)
+//     })
+//   }
+// })
 
 Vue.use(VueAxios, axiosInstance)
 

@@ -55,6 +55,7 @@ export default {
             )
             .then(res => {
                 auth.setUserToken(res.data.token)
+                Vue.axios.defaults.headers.Authorization = auth.getToken()
                 this.$router.push('search')
                 this.$emit('auth', true)
             })

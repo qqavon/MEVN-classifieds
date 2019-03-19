@@ -7,14 +7,7 @@
           <span class="nav-link-text">Strona główna</span>
         </div>
       </router-link>
-
-      <router-link to="/">
-        <div class="nav-link">
-          <i class="fas fa-list-ul"></i>
-          <span class="nav-link-text">Kategorie ogłoszeń</span>
-        </div>
-      </router-link>
-
+      
       <router-link to="/search">
         <div class="nav-link">
           <i class="fas fa-search"></i>
@@ -22,7 +15,7 @@
         </div>
       </router-link>
 
-      <router-link v-if="logged" to="/">
+      <router-link v-if="logged" to="/add">
         <div class="nav-link">
           <i class="fas fa-plus"></i>
           <span class="nav-link-text">Dodaj ogłoszenie</span>
@@ -94,8 +87,6 @@ nav {
   background-color: #fff;
   z-index: 10;
 }
-.nav-link {
-}
 .nav-link > .nav-link-text {
   display: none;
 }
@@ -123,14 +114,11 @@ nav {
 .nav-account-dropdown > * {
   color: white;
 }
-
-#nav a.router-link-exact-active {
-  
-}
 </style>
 
 <script>
 import auth from './auth.js'
+import Vue from 'vue'
 
 export default {
   data() {
@@ -151,6 +139,7 @@ export default {
     logout() {
       this.logged = false
       auth.removeUserToken()
+      Vue.axios.defaults.headers.Authorization = ''
       this.$router.replace('login')
     }
   },

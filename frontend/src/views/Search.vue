@@ -1,5 +1,6 @@
 <template>
     <div class="search">
+        <h2>Lista ogłoszeń</h2>
         <div class="nav-search">
             <input type="text" v-model="searchObj.name" placeholder="Podaj nazwę ogłoszenia (uwaga, strict)">
             <div>
@@ -55,7 +56,6 @@
                 <li v-if="currentPage < pages && currentPage+1 != pages" @click="gotoPage(pages)" > ...{{ pages }} </li>
             </ul>
         </div>
-        <h2>Lista ogłoszeń</h2>
         <div class="classifieds-list">
             <div class="loading" v-if="searching"></div>
             <div v-if="!searching">

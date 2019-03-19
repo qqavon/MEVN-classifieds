@@ -7,5 +7,8 @@ module.exports = {
     },
     isToken() {
         return localStorage.getItem('token') ? true : false
+    },
+    getToken() {
+        return localStorage.getItem('token')
     }
 }
