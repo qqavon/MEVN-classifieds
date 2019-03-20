@@ -119,8 +119,10 @@ nav {
 <script>
 import auth from './auth.js'
 import Vue from 'vue'
+import { EventBus } from './EventBus'
 
-export default {
+const obj = {
+  name: 'app',
   data() {
     return {
       activeAccountDropdown: false,
@@ -147,4 +149,10 @@ export default {
     this.logged = auth.isToken()
   }
 }
+
+EventBus.$on('loggedOut', () => {
+  obj.data().logged = false
+})
+
+export default obj
 </script>

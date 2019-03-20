@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     setUserToken(token) {
         localStorage.setItem('token', token)
     },

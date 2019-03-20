@@ -6,7 +6,12 @@ module.exports = {
     async findOne(req, res, next) {
         const userData = await UserData
             .findOne({ user: req.userData._id })
-            .select('phone email')
+            .select('phone email user')
+            .populate({
+                path: 'user',
+                model: 'user',
+                select: 'username createdAt'
+            })
 
         return res.status(200).json({
             message: 'Dane użytkownika.',

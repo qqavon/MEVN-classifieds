@@ -5,6 +5,7 @@ import Search from './views/Search.vue'
 import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Add from './views/Add.vue'
+import Account from './views/Account.vue'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/add',
       name: 'add',
       component: Add
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: Account
     }
   ]
 })
