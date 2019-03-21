@@ -151,7 +151,7 @@ const obj = {
 }
 
 EventBus.$on('loggedOut', () => {
-  obj.data().logged = false
+  obj.methods.logout()
 })
 
 export default obj

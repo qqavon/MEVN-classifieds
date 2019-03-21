@@ -6,6 +6,7 @@ import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Add from './views/Add.vue'
 import Account from './views/Account.vue'
+import Classified from './views/Classified.vue'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
       path: '/account',
       name: 'account',
       component: Account
+    },
+    {
+      path: '/classified/:id',
+      name: 'classified',
+      component: Classified
     }
   ]
 })

@@ -1,26 +1,69 @@
 <template>
-    <div class="classifieds-item" @click="test">
-        <span class="classifieds-item-name">{{ classified.name }}</span>
-        <span class="classifieds-item-category"> {{ formatCategory }} </span>
-        <span class="classifieds-item-voivodeship"> {{ formatVoivodeship }} </span>
-        <span class="classifieds-item-user"> {{ classified.user.username }} <i class="far fa-user"></i></span>
-        <span class="classifieds-item-createdAt"> {{ formatDate }} <i class="far fa-calendar"></i></span>
+    <div>
+        <div v-if="loading">Ładowanie...</div>
+        <div v-if="!loading">
+            <div class="classifieds-item classifieds-item--single">
+                <span class="classifieds-item-name">{{ classified.name }}</span>
+                <span class="classifieds-item-category"> {{ formatCategory }} </span>
+                <span class="classifieds-item-description"> {{ classified.description }} </span>
+                <span class="classifieds-item-voivodeship"> {{ formatVoivodeship }} </span>
+                <div class="classifieds-item-contact">
+                    <span> Telefon: {{ userData.phone || "brak" }} </span>
+                    <span> Email: {{ userData.email || "brak" }} </span>
+                </div>
+                <span class="classifieds-item-user"> {{ classified.user.username }} <i class="far fa-user"></i></span>
+                <span class="classifieds-item-createdAt"> {{ formatDate }} <i class="far fa-calendar"></i></span>
+                <!-- Dodać dane kontaktowe -->
+            </div>
+            <ul class="classified_errors">
+                <li class="classidied_errors_error"
+                v-for="(error, index) of errors"
+                :key="index"
+                > {{ error }} </li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script>
+import Vue from 'vue'
+
 export default {
-    props: ['classified'],
     data() {
         return {
-            categoryName: '',
-            voivodeshipName: ''
+            classified: {},
+            userData: {},
+            errors: [],
+            loading: true
         }
     },
     methods: {
-        test() {
-            this.$router.push({path: `/classified/${this.classified._id}`})
+        loadClassified() {
+            this.errors = []
+            this.loading = true
+            console.log(this.$route.params.id)
+            Vue.axios
+                .get(`/classifieds/${this.$route.params.id}`)
+                .then(res => {
+                    if(res.data.classified == null) {
+                        this.errors = ['Ogłoszenie nie istnieje']
+                        return
+                    }
+                    this.classified = res.data.classified
+                    this.userData = res.data.userData
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.errors = err.response.data.errors
+                })
+                .finally(() => {
+                    this.loading = false
+                })
         }
+    },
+    created() {
+        this.loadClassified()
     },
     computed: {
         formatCategory() {
@@ -68,59 +111,19 @@ export default {
         formatDate() {
             return new Date(this.classified.createdAt).toLocaleString()
         }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.loadClassified()
+            next()
+        })
     }
 }
 </script>
 
 <style>
-.classifieds-item {
-    position: relative;
+.classifieds-item-contact {
     display: grid;
-    border: solid black 1px;
-    background-color: rgb(255, 241, 202);
-
-    padding: 5px;
-    margin-top: 50px;
-}
-.classifieds-item--single {
-    margin: 25px 8px 0 8px;
-    
-}
-.classifieds-item-name {
-    word-break: break-all;
-    font-weight: bold;
-    border-bottom: solid black 1px;
-    margin-bottom: 5px;
-}
-.classifieds-item-category, .classifieds-item-voivodeship {
-    position: absolute;
-    
-    background-color: #fff;
-    border: solid black 1px;
-    padding: 0 2px;
-    z-index: 1;
-}
-.classifieds-item-category {
-    transform: translateY(-18px) translateX(-5px);
-}
-
-.classifieds-item-voivodeship {
-    transform: translateY(-18px) translateX(6px);
-    right: 0;
-}
-
-.classifieds-item-user {
-    text-align: right;
-    font-size: .9em;
-}
-.classifieds-item-user > i {
-    font-size: .8em;
-}
-.classifieds-item-createdAt {
-    text-align: right;
-    font-size: .75em;
-}
-.classifieds-item-createdAt > i, .classifieds-item-user > i {
-    margin-left: 5px;
+    margin-top: 20px;
 }
 </style>

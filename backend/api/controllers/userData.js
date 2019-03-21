@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Classifieds = require('../models/classifieds')
 const UserData = require('../models/userData')
 const { check } = require('express-validator/check')
 
@@ -12,10 +13,15 @@ module.exports = {
                 model: 'user',
                 select: 'username createdAt'
             })
+        
+        const classifieds = await Classifieds
+            .find({ user: req.userData._id })
+            .select('name')
 
         return res.status(200).json({
             message: 'Dane użytkownika.',
-            userData
+            userData,
+            classifieds
         })
     },
 

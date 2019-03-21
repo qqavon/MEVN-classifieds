@@ -1,4 +1,5 @@
 const Classifieds = require('../models/classifieds')
+    , UserData = require('../models/userData')
     , mongoose = require('mongoose')
     , { check, oneOf } = require('express-validator/check')
 
@@ -98,10 +99,16 @@ module.exports = {
                 path: 'user',
                 select: 'username'
             })
+        
+        const userData = await UserData
+            .findOne({ user: classified.user._id })
+            .select('-user -_id -__v')
+
 
         return res.status(200).json({
             message: 'Wybrane szczegółowe ogłoszenie.',
-            classified
+            classified,
+            userData
         })
     }
 }
