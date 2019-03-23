@@ -60,6 +60,9 @@ module.exports = {
         if(req.query.q) findQuery['name'] = new RegExp(`.*${req.query.q}.*`)
         if(req.query.voivodeship > 0) findQuery['voivodeship'] = +req.query.voivodeship
         if(+req.query.category > 0) findQuery['category'] = +req.query.category
+        if(req.query.user) findQuery['user'] = req.query.user
+
+        console.log(findQuery)
 
         let classifiedsCount = await Classifieds.countDocuments(findQuery)
         let docsPerPage = 10
@@ -110,6 +113,12 @@ module.exports = {
             classified,
             userData
         })
+    },
+
+    async findAllByUser(req, res, next) {
+        const classifieds = await Classifieds
+            .find({ user: req.userData._id })
+            .select('name createdAt') //TUTAJ SKOŃCZYŁEM, ZROBIĆ USUWANIE OGŁOSZEŃ Z PANELU UŻYTKOWNIKA, MUSZĘ DODAĆ JESZCZE ROUTER DO TEJ METODY ITD
     }
 }
 
@@ -161,6 +170,11 @@ module.exports.validateClassifiedSearch = [
         .optional()
         .isNumeric()
         .withMessage('Podana strona nie jest numeryczna'),
+
+    check('user')
+        .optional()
+        .isMongoId()
+        .withMessage('Niepoprawne id użytkownika'),
 
     check('sort_by')
         .optional()

@@ -27,8 +27,8 @@
         <span class="nav-link-text">Konto</span>
 
         <div v-if="!logged" class="nav-account-dropdown">
-          <router-link to="/login"> Login </router-link>
-          <router-link to="/register"> Register </router-link>
+          <router-link to="/login"> Zaloguj </router-link>
+          <router-link to="/register"> Zarejestruj </router-link>
         </div>
 
         <div v-else class="nav-account-dropdown">
@@ -142,7 +142,6 @@ const obj = {
       this.logged = false
       auth.removeUserToken()
       Vue.axios.defaults.headers.Authorization = ''
-      this.$router.replace('login')
     }
   },
   created() {

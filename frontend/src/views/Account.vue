@@ -38,13 +38,26 @@
                 > {{ error }} </li>
             </ul>
         </div>
+        <div v-if="loadedClassifieds">
+            <h3>Twoje ogłoszenia</h3>
+            <classified
+            v-for="(classified, index) of classifieds"
+            :key="index"
+            :classified="classified"
+            @delete="deleteClassified($event)"
+            ></classified>
+        </div>
     </div>
 </template>
 
 <script>
 import Vue from 'vue'
+import ClassifiedItemUser from '../components/ClassifiedItemUser.vue'
 
 export default {
+    components: {
+        'classified': ClassifiedItemUser
+    },
     data() {
         return {
             userObj: {
@@ -58,7 +71,9 @@ export default {
             editing: false,
             loading: false,
             errors: [],
-            success: false
+            success: false,
+            classifieds: [],
+            loadedClassifieds: false
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -69,16 +84,23 @@ export default {
     },
     methods: {
         getUserData() {
+            this.loadedClassifieds = false
+            this.classifieds = []
             Vue.axios.get('/userData')
-            .then(res => {
-                const userData = res.data.userData
+            .then(ud => {
+                const userData = ud.data.userData
 
                 this.userObj.username = userData.user.username
                 this.userObj.cAt = userData.user.createdAt
                 this.userObj.email = this.userObj.emailC = userData.email
                 this.userObj.phone = this.userObj.phoneC = userData.phone
 
-                console.log(this.userObj)
+                Vue.axios.get(`/classifieds/?user=${ud.data.userData.user._id}`)
+                .then(c => {
+                    this.classifieds = c.data.classifieds
+                    this.loadedClassifieds = true
+                    console.log(this.classifieds)
+                })
             })
             .catch(err => {
                 console.log(err)
@@ -114,6 +136,17 @@ export default {
                     })
                 }
             }
+        },
+        deleteClassified(id) {
+            this.classifieds.filter((v,i) => { if(v._id==id) {
+                Vue.axios.delete(`classifieds/${id}`)
+                .then(result => {
+                    this.classifieds.splice(i, 1)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }})
         }
     },
     computed: {

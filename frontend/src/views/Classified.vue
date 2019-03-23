@@ -126,4 +126,7 @@ export default {
     display: grid;
     margin-top: 20px;
 }
+.classifieds-item-description {
+    white-space: pre-line;
+}
 </style>
