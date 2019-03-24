@@ -28,7 +28,7 @@ module.exports = {
                 },
                 JWT_SECRET,
                 {
-                    expiresIn: 600 //10 min (testowy czas)
+                    expiresIn: 1200 //20 min (testowy czas)
                 }
             )
 
@@ -39,7 +39,7 @@ module.exports = {
         }
         else {
             return res.status(400).json({
-                message: 'Nazwa użytkownika lub hasło jest niepoprawne.'
+                errors: ['Nazwa użytkownika lub hasło jest niepoprawne.']
             })
         }
     },

@@ -41,7 +41,6 @@ export default {
         loadClassified() {
             this.errors = []
             this.loading = true
-            console.log(this.$route.params.id)
             Vue.axios
                 .get(`/classifieds/${this.$route.params.id}`)
                 .then(res => {
@@ -51,10 +50,8 @@ export default {
                     }
                     this.classified = res.data.classified
                     this.userData = res.data.userData
-                    console.log(res)
                 })
                 .catch(err => {
-                    console.log(err)
                     this.errors = err.response.data.errors
                 })
                 .finally(() => {

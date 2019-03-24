@@ -1,5 +1,5 @@
 <template>
-    <div class="search" @keyup.enter="login()" >
+    <div class="login" @keyup.enter="login()" >
         <h1>Logowanie</h1>
         <input
             type="text"
@@ -72,11 +72,13 @@ export default {
 </script>
 
 <style scoped>
-    .search {
+    .login {
         display: grid;
         align-items: center;
         grid-gap: 15px;
         padding: 2em;
+        width: 300px;
+        justify-self: center;
     }
     input, button {
         outline: none;
@@ -111,5 +113,10 @@ export default {
     }
     li {
         color: rgb(211, 28, 28)
+    }
+    @media screen and (max-width: 360px){
+        .login {
+            width: auto;
+        }
     }
 </style>

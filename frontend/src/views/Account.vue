@@ -99,7 +99,6 @@ export default {
                 .then(c => {
                     this.classifieds = c.data.classifieds
                     this.loadedClassifieds = true
-                    console.log(this.classifieds)
                 })
             })
             .catch(err => {
@@ -117,8 +116,7 @@ export default {
     
                 if(this.userObj.phone != this.userObj.phoneC)
                     updatedData['phone'] = this.userObj.phone
-    
-                console.log(updatedData)
+                    
                 if(this.userObj.email != this.userObj.emailC || this.userObj.phone != this.userObj.phoneC) {
                     Vue.axios.put(
                         '/userData',

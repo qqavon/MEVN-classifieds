@@ -87,10 +87,11 @@ export default {
 <style>
 .categories {
     padding: 0 50px;
+    margin-bottom: 25px;
 }
 .category-list {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 25px;
 }
 .category-item {
@@ -117,8 +118,20 @@ export default {
     z-index: 1;
 }
 .category-item-name {
+    margin-left: 20px;
     justify-self: center;
     align-self: center;
     text-align: center;    
+}
+
+@media screen and (max-width: 550px) {
+    .category-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media screen and (max-width: 400px) {
+    .category-list {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

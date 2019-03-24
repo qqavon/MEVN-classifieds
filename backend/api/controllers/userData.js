@@ -17,8 +17,6 @@ module.exports = {
         const classifieds = await Classifieds
             .find({ user: req.userData._id })
             .select('name')
-        
-        console.log(userData)
 
         return res.status(200).json({
             message: 'Dane użytkownika.',

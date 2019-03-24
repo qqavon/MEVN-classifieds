@@ -1,5 +1,5 @@
 <template>
-    <div class="search" @keyup.enter="register">
+    <div class="register" @keyup.enter="register">
         <h1>Rejestracja</h1>
         <input type="text" placeholder="Nazwa użytkownika" v-model="userObj.username">
         <input type="password" placeholder="Hasło" v-model="userObj.password">
@@ -55,7 +55,6 @@ export default {
             .catch(err => {
                 this.errors = []
                 this.errors = err.response.data.errors
-                console.log(err.response)
             })
         }
     }
@@ -63,11 +62,13 @@ export default {
 </script>
 
 <style scoped>
-    .search {
+    .register {
         display: grid;
         align-items: center;
         grid-gap: 15px;
         padding: 2em;
+        width: 300px;
+        justify-self: center;
     }
     input, button {
         outline: none;
@@ -102,5 +103,10 @@ export default {
     .success {
         color: limegreen;
         text-align: center;
+    }
+    @media screen and (max-width: 360px){
+        .register {
+            width: auto;
+        }
     }
 </style>

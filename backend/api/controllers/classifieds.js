@@ -62,8 +62,6 @@ module.exports = {
         if(+req.query.category > 0) findQuery['category'] = +req.query.category
         if(req.query.user) findQuery['user'] = req.query.user
 
-        console.log(findQuery)
-
         let classifiedsCount = await Classifieds.countDocuments(findQuery)
         let docsPerPage = 10
 

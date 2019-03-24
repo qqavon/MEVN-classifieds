@@ -81,7 +81,6 @@ export default {
     methods: {
         addNew() {
             this.errors = []
-            console.log(this.classified)
 
             Vue.axios.post(
                 '/classifieds',
@@ -93,7 +92,6 @@ export default {
                 }
             )
             .then(res => {
-                console.log(res)
                 this.classified.name = ''
                 this.classified.description = ''
                 this.classified.cateogry = "0"

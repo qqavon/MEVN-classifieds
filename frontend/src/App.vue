@@ -38,11 +38,14 @@
       </div>
     </nav>
 
-    <transition name="fade" mode="out-in">
-      <keep-alive>
-        <router-view @auth="auth" />
-      </keep-alive>
-    </transition>
+    <main>
+      <transition name="fade" mode="out-in" class="test">
+        <keep-alive>
+          <router-view @auth="auth" />
+        </keep-alive>
+      </transition>
+    </main>
+
   </div>
 </template>
 
@@ -53,7 +56,9 @@
 body {
   margin: 0;
 }
-
+main {
+  display: grid;
+}
 * {
   font-family: 'Muli', sans-serif;
   text-decoration: none;
@@ -77,7 +82,6 @@ nav {
   align-items: center;
   justify-items: center;
   justify-content: right;
-  /* overflow: hidden; */
 
   top: 0;
   left: 0;
@@ -114,6 +118,15 @@ nav {
 .nav-account-dropdown > * {
   color: white;
 }
+
+@media screen and (min-width:800px){
+  main {
+    grid-template-columns: 1fr 800px 1fr;
+  }
+  main > * {
+    grid-column: 2 / 3;
+  }
+}
 </style>
 
 <script>
@@ -142,6 +155,7 @@ const obj = {
       this.logged = false
       auth.removeUserToken()
       Vue.axios.defaults.headers.Authorization = ''
+      this.$router.push('login')
     }
   },
   created() {
@@ -155,3 +169,7 @@ EventBus.$on('loggedOut', () => {
 
 export default obj
 </script>
+
+<style>
+
+</style>
