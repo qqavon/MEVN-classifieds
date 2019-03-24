@@ -7,10 +7,11 @@ import Register from './views/Register.vue'
 import Add from './views/Add.vue'
 import Account from './views/Account.vue'
 import Classified from './views/Classified.vue'
+import auth from './auth'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -49,3 +50,20 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if(!auth.isToken() && ['login', 'register', 'search', 'classified', 'home'].some((v) => { return v == to.name })) {
+    next()
+  }
+  else if(auth.isToken() && ['login', 'register', null].some((v) => { return v == to.name })) {
+    router.replace({ name: 'home' })
+  }
+  else if(auth.isToken()) {
+    next()
+  }
+  else {
+    router.replace({ name: 'login' })
+  }
+})
+
+export default router;
