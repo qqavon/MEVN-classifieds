@@ -71,8 +71,6 @@ module.exports = {
         let skipDocs = page * docsPerPage - docsPerPage
         let numOfPages = Math.ceil(classifiedsCount / docsPerPage)
 
-        //Na janusza bo nie mam pomysłu SORTOWANE
-
         const classifieds = await Classifieds
             .find(findQuery)
             .skip(skipDocs)
