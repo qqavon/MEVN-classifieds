@@ -41,7 +41,7 @@ module.exports = {
     async delete(req, res, next) {
         const classified = await Classifieds.findOneAndDelete({ user: req.userData._id, _id: req.params.id })
         if(!classified)
-            return res.status(200).json({
+            return res.status(400).json({
                 message: 'Ogłoszenie nie istnieje.'
             })
 
@@ -98,23 +98,24 @@ module.exports = {
                 path: 'user',
                 select: 'username'
             })
+
+        if(!classified) {
+            return res.status(400).json({
+                errors: ['Ogłoszenie nie istnieje.']
+            })
+        }
+        else {
+            const userData = await UserData
+                .findOne({ user: classified.user._id })
+                .select('-user -_id -__v')
+    
+            return res.status(200).json({
+                message: 'Wybrane szczegółowe ogłoszenie.',
+                classified,
+                userData
+            })
+        }
         
-        const userData = await UserData
-            .findOne({ user: classified.user._id })
-            .select('-user -_id -__v')
-
-
-        return res.status(200).json({
-            message: 'Wybrane szczegółowe ogłoszenie.',
-            classified,
-            userData
-        })
-    },
-
-    async findAllByUser(req, res, next) {
-        const classifieds = await Classifieds
-            .find({ user: req.userData._id })
-            .select('name createdAt') //TUTAJ SKOŃCZYŁEM, ZROBIĆ USUWANIE OGŁOSZEŃ Z PANELU UŻYTKOWNIKA, MUSZĘ DODAĆ JESZCZE ROUTER DO TEJ METODY ITD
     }
 }
 

@@ -2,7 +2,7 @@
     <div>
         <div v-if="loading">Ładowanie...</div>
         <div v-if="!loading">
-            <div class="classifieds-item classifieds-item--single">
+            <div v-if="errors.length == 0" class="classifieds-item classifieds-item--single">
                 <span class="classifieds-item-name">{{ classified.name }}</span>
                 <span class="classifieds-item-category"> {{ formatCategory }} </span>
                 <span class="classifieds-item-description"> {{ classified.description }} </span>
@@ -15,7 +15,7 @@
                 <span class="classifieds-item-createdAt"> {{ formatDate }} <i class="far fa-calendar"></i></span>
                 <!-- Dodać dane kontaktowe -->
             </div>
-            <ul class="classified_errors">
+            <ul v-else class="classified_errors">
                 <li class="classidied_errors_error"
                 v-for="(error, index) of errors"
                 :key="index"
