@@ -34,6 +34,8 @@ Passwords are hashed.
 ### Adding
 ![Adding](./frontend/public/img/dodawanieOgloszenia.gif)
 
+Validation is on the **client** and **server** side.
+
 ### Deleting
 ![Deleting](./frontend/public/img/usuwanieOgloszenia.gif)
 
@@ -41,5 +43,7 @@ Passwords are hashed.
 Contact details are displayed in every classifieds.
 
 ![Editing](./frontend/public/img/1.JPG)
+
 ![Editing](./frontend/public/img/aktualizowanieDanych.gif)
+
 ![Editing](./frontend/public/img/2.JPG)
